@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>TOEIC Unit 1–4 Practice App</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Kaku Gothic ProN','Yu Gothic UI','Meiryo',sans-serif;background:#f4f5f7;color:#1a1a1a;min-height:100vh;-webkit-text-size-adjust:100%;line-height:1.5}
+#app{max-width:560px;margin:0 auto;padding:14px;padding-bottom:24px}
+button{font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+input{font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;width:100%;outline:none;background:#fff;-webkit-appearance:none}
+input:focus{border-color:#378ADD;box-shadow:0 0 0 3px rgba(55,138,221,0.15)}
+.card{background:#fff;border:0.5px solid #e0e0e0;border-radius:12px;padding:16px 18px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.btn-primary{background:#E6F1FB;color:#0C447C;border:0.5px solid #B5D4F4;border-radius:10px;padding:14px 16px;font-size:15px;font-weight:500;width:100%;min-height:48px}
+.btn-primary:active{background:#D6E7F8}
+.btn-primary:disabled{background:#f0f0f0;color:#999;border-color:#e0e0e0;cursor:not-allowed}
+.btn-secondary{background:#f5f5f5;color:#444;border:0.5px solid #ddd;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;min-height:46px}
+.btn-secondary:active{background:#e8e8e8}
+.btn-success{background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;min-height:46px}
+.btn-danger{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;min-height:46px}
+.btn-warning{background:#FAEEDA;color:#854F0B;border:0.5px solid #FAC775;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;min-height:46px}
+.btn-warning:active{background:#F7E2BE}
+.progress{height:5px;background:#e8eaef;border-radius:3px;margin-bottom:14px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#378ADD,#5DA8E8);border-radius:3px;transition:width 0.4s ease}
+.choice-btn{background:#fff;border:0.5px solid #e0e0e0;border-radius:10px;padding:13px 12px;text-align:left;font-size:15px;width:100%;display:flex;gap:8px;align-items:flex-start;min-height:48px;color:#1a1a1a}
+.choice-btn:active:not(:disabled){background:#f5f5f5;transform:scale(0.99)}
+.choice-correct{background:#EAF3DE!important;border-color:#C0DD97!important;color:#3B6D11!important;font-weight:500}
+.choice-wrong{background:#FCEBEB!important;border-color:#F7C1C1!important;color:#A32D2D!important}
+.choice-selected{background:#E6F1FB!important;border-color:#378ADD!important;color:#0C447C!important;border-width:1.5px!important}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tag-pill{display:inline-block;background:#FCEBEB;color:#A32D2D;border-radius:8px;padding:3px 10px;font-size:12px;margin:3px}
+.vocab-pill{display:inline-block;background:#FAEEDA;color:#633806;border-radius:8px;padding:3px 10px;font-size:12px;margin:3px}
+.footer{font-size:11px;color:#999;text-align:center;margin-top:18px;padding-top:10px;border-top:0.5px solid #eee}
+.teacher-badge{background:#FAEEDA;color:#633806;border:0.5px solid #FAC775;border-radius:8px;padding:5px 12px;font-size:12px;margin-bottom:12px;display:inline-block;font-weight:500}
+.unit-btn{padding:14px 12px;border-radius:10px;border:1.5px solid #e0e0e0;background:#fff;font-size:14px;cursor:pointer;text-align:center;color:#444;min-height:62px;display:flex;flex-direction:column;justify-content:center}
+.unit-btn:active{background:#f5f5f5}
+.unit-btn.active{border-color:#378ADD;background:#E6F1FB;color:#0C447C}
+.unit-btn.has-progress{border-color:#FAC775;background:#FEF9E7}
+.unit-btn.has-progress.active{border-color:#378ADD;background:#E6F1FB}
+.voice-btn{background:#f5f5f5;border:0.5px solid #ddd;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;min-height:32px;color:#444}
+.voice-btn:active{background:#e8e8e8}
+.voice-btn.active{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97;font-weight:500}
+.popup-def{display:inline-block;background:#fff;border:0.5px solid #FAC775;border-radius:6px;padding:2px 8px;font-size:12px;color:#854F0B;margin-left:4px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.vocab-underline{background:none;border:none;border-bottom:1px dotted #aaa;cursor:pointer;font:inherit;color:#666;padding:0 2px}
+.vocab-underline.active{background:#FEF9E7;color:#854F0B;border-bottom-color:#FAC775;border-radius:3px}
+.grade-display{font-size:72px;font-weight:600;line-height:1;letter-spacing:-0.02em}
+.grade-card{text-align:center;padding:24px 18px;border-radius:14px;margin-bottom:14px}
+.grade-card.excellent{background:linear-gradient(135deg,#EAF3DE,#D9EBC1);border:0.5px solid #C0DD97}
+.grade-card.good{background:linear-gradient(135deg,#E6F1FB,#CCE3F8);border:0.5px solid #B5D4F4}
+.grade-card.needs-work{background:linear-gradient(135deg,#FAEEDA,#F7E0B5);border:0.5px solid #FAC775}
+.classroom-card{background:linear-gradient(135deg,#F0F7FF,#E6F1FB);border:0.5px solid #B5D4F4;border-radius:12px;padding:16px}
+.classroom-card .icon{font-size:18px;margin-right:6px}
+.retry-correct-banner{background:linear-gradient(135deg,#EAF3DE,#D9EBC1);border:0.5px solid #C0DD97;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.retry-correct-banner .main{font-weight:500;font-size:14px;color:#3B6D11;margin-bottom:2px}
+.retry-correct-banner .sub{font-size:11px;color:#5A8A1F}
+.resume-banner{background:#FEF9E7;border:0.5px solid #FAC775;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#633806}
+.resume-banner .actions{margin-top:8px;display:flex;gap:8px}
+.resume-banner button{flex:1;font-size:13px;padding:8px;border-radius:8px;border:0.5px solid #FAC775;background:#fff;color:#854F0B;cursor:pointer;min-height:36px}
+.resume-banner button.primary{background:#854F0B;color:#fff;border-color:#854F0B}
+
+@media (max-width:380px){
+  #app{padding:10px}
+  .card{padding:14px 14px}
+  .grade-display{font-size:60px}
+  .choice-btn{font-size:14px;padding:12px 10px}
+}
+@media (min-width:768px){
+  body{background:linear-gradient(180deg,#f4f5f7,#eaecef)}
+  #app{padding:24px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script>
+// ── VOCAB DICTIONARY ────────────────────────────────────
+const VOCAB={"above":"上記の","accord":"一致","according":"〜によると","account":"口座","accounting":"会計","accounts":"口座","accuracy":"正確さ","acquisition":"買収","acquisitions":"買収","address":"取り組む","adopt":"採用する","adopted":"採用した","advisor":"顧問","advisors":"顧問","advisory":"諮問の","affect":"影響を与える","affected":"影響を受けた","affecting":"影響を与えること","affordable":"手頃な","agencies":"機関","agency":"機関、代理店","agree":"合意する","agreed":"合意した","agreeing":"合意すること","agreement":"合意","aim":"目的とする、狙う","aimed":"狙った","aiming":"狙うこと","allocate":"配分する","allocated":"配分した","allocating":"配分すること","ambitious":"野心的な","analyst":"アナリスト","analysts":"アナリスト","announce":"発表する","announced":"発表した","announcing":"発表すること","applied":"申請した","apply":"申請する、適用する","applying":"申請すること","approval":"承認","approve":"承認する","approved":"承認した","approving":"承認すること","area":"地域","areas":"地域","asia":"アジア","ask":"求める","asked":"求めた","asking":"求めること","asset":"資産","assets":"資産","associate":"関連付ける","associated":"関連した","associates":"関連付ける","average":"平均","averages":"平均","balance":"残高、均衡","bank":"銀行","banking":"銀行業務","banks":"銀行","batteries":"バッテリー","battery":"バッテリー","behalf":"代理","benchmark":"基準","benchmarks":"基準","benefit":"福利厚生、恩恵","benefits":"福利厚生","billion":"10億","board":"取締役会","bodies":"組織","body":"組織、団体","bond":"債券","bonds":"債券","boost":"押し上げる、増加","branch":"支店","branches":"支店","broader":"より広範な","budget":"予算","budgets":"予算","build":"建設する、築く","building":"建物、建設","built":"建設した","business":"事業、企業","businesses":"事業","buyer":"購入者","buyers":"購入者","calculate":"計算する","calculated":"計算した","calculating":"計算すること","capital":"資本","carbon":"炭素","card":"カード","cards":"カード","cash":"現金","central":"中央の、中心の","ceo":"最高経営責任者","chain":"連鎖、店舗網","chains":"店舗網","chairman":"議長","charge":"請求、料金","charges":"料金","check":"抑制、確認","cite":"挙げる、引用する","cited":"挙げた","cities":"市","citing":"挙げて","city":"市","clean":"クリーンな、清潔な","commercial":"商業の","commission":"委員会、手数料","commissions":"手数料","committee":"委員会","committees":"委員会","communities":"コミュニティ","community":"地域社会、コミュニティ","companies":"会社","company":"会社","competition":"競争","complete":"完了する","completed":"完了した","completing":"完了すること","compliance":"法令遵守","complies":"従う","comply":"従う","concern":"懸念","concerns":"懸念","condition":"状態","conditions":"状況","confidence":"信頼感","consider":"考慮する","considered":"考慮した","considering":"考慮すること","construction":"建設","consult":"協議する","consultant":"コンサルタント","consultants":"コンサルタント","consulting":"コンサルティング","consumer":"消費者","consumers":"消費者","contract":"契約","contracts":"契約","contribution":"拠出、貢献","contributions":"拠出","corporation":"企業","corporations":"企業","cost":"費用","costs":"費用","council":"議会","councils":"議会","coverage":"補償範囲、カバー範囲","create":"創出する","created":"創出した","creates":"創出する","creating":"創出すること","credit":"信用、貸付","crisis":"危機","currencies":"通貨","currency":"通貨","customer":"顧客","customers":"顧客","decide":"決定する","decided":"決定した","deciding":"決定すること","decline":"低下、低下する","deepen":"深まる","deepened":"深まった","deepening":"深まること","deficit":"赤字","delay":"遅延、遅らせる","delays":"遅延","demand":"需要","dental":"歯科の","department":"部門、省","departments":"部門","depend":"依存する","dependent":"依存した","depends":"依存する","despite":"〜にもかかわらず","detail":"詳細","detailed":"詳細な","details":"詳細","developer":"開発業者","developers":"開発業者","digital":"デジタルの","director":"取締役","directors":"取締役","disclose":"開示する","disclosed":"開示した","disclosing":"開示すること","disclosure":"開示","diversify":"分散する","diversifying":"分散させること","division":"部門","divisions":"部門","domestic":"国内の","double":"倍にする","doubled":"倍になった","doubling":"倍にすること","downturn":"後退","drive":"駆動する","driven":"駆動された","driving":"駆動する","drove":"駆動した","earning":"収益","earnings":"収益","economies":"経済","economist":"経済学者","economists":"経済学者","economy":"経済","efficiency":"効率","efficient":"効率的な","effort":"努力","efforts":"努力","electronically":"電子的に","emergency":"緊急事態","emission":"排出","emissions":"排出","employee":"従業員","employees":"従業員","employer":"雇用主","employers":"雇用主","employment":"雇用","enact":"制定する","enacted":"制定した","enacting":"制定すること","end":"終わり、終わる","ended":"終わった","ending":"終わる","ends":"終わる","engineer":"技術者","engineers":"技術者","enter":"入る、参入する","entered":"参入した","entering":"参入すること","environmental":"環境の","equities":"株式","equity":"株式、純資産","establish":"設立する、確立する","established":"設立した","establishing":"設立すること","estimate":"見積もる、推定する","estimated":"見積もった","estimates":"見積もり","estimating":"見積もること","exceed":"超える","exceeded":"超えた","exceeding":"超えること","excess":"過剰な、超過","executive":"幹部","executives":"幹部","expand":"拡大する","expanded":"拡大した","expanding":"拡大すること","expansion":"拡大","expansions":"拡大","expect":"予期する","expected":"予想される","expects":"予期する","expense":"経費","expenses":"経費","export":"輸出","exporter":"輸出業者","exporters":"輸出業者","exports":"輸出","extend":"延長する","extended":"延長した","extending":"延長すること","face":"直面する","faced":"直面した","facilities":"施設","facility":"施設","facing":"直面すること","factor":"要因","factors":"要因","fee":"料金","fees":"料金","file":"提出する、書類","filed":"提出した","files":"書類","filing":"提出","finalize":"最終化する","finalized":"最終化した","finalizing":"最終化すること","finance":"財務、資金提供する","firm":"会社","fiscal":"財政の","focus":"集中する、焦点","focused":"集中した","focuses":"集中する","focusing":"集中すること","follow":"〜に続く","followed":"〜に続いた","following":"〜に続いて","force":"強制する","forced":"強制された","forcing":"強制すること","forecast":"予測","forecasts":"予測","found":"見つけた、設立した","founded":"設立した","founding":"設立","fund":"資金、基金","funded":"資金提供された","funding":"資金調達","funds":"資金","generate":"生成する","generated":"生成した","generates":"生成する","generating":"生成すること","global":"世界的な","goal":"目標","goals":"目標","governance":"統治","government":"政府","grew":"成長した","grow":"成長する","growing":"成長する","grown":"成長した","growth":"成長","half":"半分","halt":"停止する","halted":"停止した","health":"健康","held":"保有した","help":"助ける","helped":"助けた","higher":"より高い","hire":"雇う","hired":"雇った","hiring":"雇用","history":"歴史","hold":"保有する","holding":"保有","holdings":"保有","household":"世帯","households":"世帯","import":"輸入","imports":"輸入","improve":"改善する","improved":"改善した","improvement":"改善","improvements":"改善","improving":"改善すること","include":"含む","included":"含めた、含まれた","includes":"含む","including":"〜を含む","income":"所得","increase":"増加","increased":"増加した","increases":"増加","increasing":"増加すること","index":"指数","indexes":"指数","indices":"指数","individual":"個々の、個人","individuals":"個人","inequality":"格差","inflation":"インフレ","initiative":"取り組み","initiatives":"取り組み","institution":"機関","institutions":"機関","intense":"激しい","interest":"利息、関心","inventory":"在庫","invest":"投資する","invested":"投資した","investing":"投資すること","investment":"投資","investor":"投資家","investors":"投資家","invoice":"請求書","invoices":"請求書","issue":"問題、発行する","issued":"発行した","issues":"問題","issuing":"発行すること","job":"仕事","jobs":"仕事","keep":"保つ","keeping":"保つこと","kept":"保った","key":"重要な","labor":"労働","largest":"最大の","latest":"最新の","law":"法律","laws":"法律","lead":"主導する、トップ","leader":"指導者","leading":"主導する","led":"主導した","legal":"法律の","legally":"法的に","legislature":"議会、立法府","lend":"貸し付ける","lender":"貸し手","lenders":"貸し手","lending":"貸付","lent":"貸し付けた","level":"水準、レベル","levels":"水準","loan":"ローン","loans":"ローン","local":"地元の、地域の","location":"拠点、場所","locations":"拠点","longer":"より長い","lower":"引き下げる、より低い","lowered":"引き下げた","lowering":"引き下げること","made":"作った、行った","maintain":"維持する","maintained":"維持した","maintaining":"維持すること","management":"経営","manager":"責任者","managers":"責任者","manufacturer":"製造業者","manufacturers":"製造業者","manufacturing":"製造","march":"3月","market":"市場","markets":"市場","material":"原材料","materials":"原材料","meet":"会う、満たす","meeting":"会議","meetings":"会議","member":"メンバー、会員","members":"メンバー","met":"会った、満たした","method":"方法","methods":"方法","million":"100万","minimize":"最小化する","minimized":"最小化した","minimizing":"最小化すること","minimum":"最低限の","monetary":"通貨の","month":"月","months":"月","mortgage":"住宅ローン","mortgages":"住宅ローン","nationwide":"全国の","net":"純（の）","network":"ネットワーク","networks":"ネットワーク","non":"非","note":"指摘する","noted":"指摘した","notes":"指摘する","noting":"指摘すること","obtain":"取得する","obtained":"取得した","obtaining":"取得すること","offer":"提示する、申し出","offered":"提示した","offers":"申し出","offset":"相殺する","often":"しばしば","operate":"運営する","operated":"運営した","operating":"運営している","order":"注文、命じる","ordered":"命じた","orders":"注文","organization":"組織","organizations":"組織","outline":"概要を述べる","outlined":"概要を述べた","outlines":"概要を述べる","outlining":"概要を述べること","output":"生産量","outputs":"生産量","oversaw":"監督した","oversee":"監督する","overseeing":"監督すること","oversees":"監督する","package":"パッケージ","packages":"パッケージ","paid":"支払った","part":"一部","parts":"一部","pay":"支払う","paying":"支払うこと","payment":"支払い","payments":"支払い","pays":"支払う","penalties":"罰金","penalty":"罰金、ペナルティ","pend":"係争する","pending":"係属中の","performance":"業績、性能","period":"期間","periods":"期間","physical":"物理的な","place":"場所","places":"場所","plan":"計画","planning":"計画立案","plans":"計画","plant":"工場","plants":"工場","play":"果たす、演じる","played":"果たした","playing":"果たすこと","plays":"果たす","pledge":"誓約する","pledged":"誓約した","pledges":"誓約","policies":"方針","policy":"方針","portfolio":"ポートフォリオ","portfolios":"ポートフォリオ","prefer":"好む","preferred":"好んだ、優先的な","preferring":"好むこと","prefers":"好む","premium":"高級な、プレミアム","prevent":"防ぐ","prevented":"防いだ","preventing":"防ぐこと","price":"価格","prices":"価格","prior":"以前の","process":"過程、処理する","processed":"処理した","processing":"処理","producer":"生産者","producers":"生産者","product":"製品","production":"生産","productivity":"生産性","products":"製品","profit":"利益","profits":"利益","program":"プログラム","programs":"プログラム","project":"プロジェクト","projects":"プロジェクト","prompt":"促す、即座の","prompted":"促した","prompting":"促すこと","properties":"資産","property":"資産、不動産","proposal":"提案","proposals":"提案","purchase":"購入","purchased":"購入した","purchases":"購入","quarter":"四半期","quarterly":"四半期の","raise":"引き上げる、提起する","raised":"引き上げた","raises":"引き上げる","raising":"引き上げること","rate":"レート、利率","rates":"レート、利率","rather":"むしろ","raw":"生の、原料の","recession":"不況","recommend":"勧める","recommended":"勧めた","recommends":"勧める","recover":"回復する","recovered":"回復した","recovering":"回復している","recovery":"回復","redesign":"再設計","reduce":"削減する","reduced":"削減した","reducing":"削減すること","reflect":"反映する、表す","reflected":"反映した","reflecting":"反映すること","reform":"改革","reforms":"改革","regular":"定期的な","regularly":"定期的に","regulation":"規制","regulations":"規制","regulatory":"規制の","release":"発表","released":"発表した","releases":"発表","releasing":"発表すること","report":"報告書","reported":"報告した","reports":"報告書","require":"要する","required":"必須の","requirement":"要件","requirements":"要件","requires":"要する","requiring":"要求すること","research":"研究","reserve":"準備金、予備","reserves":"準備金","resource":"資源","resources":"資源","respondent":"回答者","respondents":"回答者","response":"対応","responses":"対応","responsible":"責任ある","restructure":"再構築する","restructuring":"再構築","result":"結果","results":"結果","retail":"小売","retirement":"退職","return":"見返り、戻す","returns":"見返り","revenue":"収入","revenues":"収入","review":"見直し、レビュー","reviewed":"見直した","reviewing":"見直すこと","rise":"上昇する","risen":"上昇した","rising":"上昇する","risk":"リスク","risks":"リスク","role":"役割","roles":"役割","rose":"上昇した","sale":"販売","sales":"販売","sector":"部門","sectors":"部門","secure":"確保する","secured":"確保した","securing":"確保すること","securities":"証券","security":"証券、安全保障","seek":"求める","seeking":"求めること","segment":"区分、セグメント","segments":"区分","service":"サービス、業務","services":"サービス","set":"設定する","share":"株、シェア、共有する","shareholder":"株主","shareholders":"株主","shares":"株","shift":"変化、移行","shifting":"変化させること","shifts":"変化","show":"示す","showed":"示した","showing":"示すこと","shown":"示された","sign":"署名する、兆候","signed":"署名した","signing":"署名すること","skill":"技能","skills":"技能","solution":"解決策","solutions":"解決策","sought":"求めた","southeast":"南東","spendingwth":"支出","startup":"スタートアップ","startups":"スタートアップ","statement":"声明、明細","statements":"声明","stock":"株式","stocks":"株式","store":"店舗、保管する","stores":"店舗","strategic":"戦略的な","strategies":"戦略","strategy":"戦略","stronger":"より強い","submit":"提出する","submitted":"提出した","submitting":"提出すること","supervise":"監督する","supervised":"監督した","supervising":"監督すること","supplies":"供給","supply":"供給","support":"支援する、支援","supported":"支援した","supporting":"支援すること","survey":"調査","surveys":"調査","target":"目標、対象とする","targeted":"対象とした","targets":"目標","team":"チーム","teams":"チーム","technologies":"技術","technology":"技術","term":"期間、用語","terms":"条件","time":"時間","times":"時間","trade":"貿易、取引","traded":"取引された","trades":"取引","trading":"取引","travel":"出張、旅行","treasury":"財務","turnover":"回転率","uncertainty":"不確実性","unchanged":"変更されない","unemployment":"失業","use":"使用する、用途","used":"使用した","uses":"使用する","using":"使用すること","vendor":"業者、ベンダー","vendors":"業者","vision":"視覚、ビジョン","vote":"投票する","voted":"投票した","voting":"投票","wage":"賃金","wages":"賃金","warn":"警告する","warned":"警告した","warning":"警告","waste":"無駄、廃棄物","wastes":"廃棄物","weaken":"弱める","weakened":"弱めた","weakening":"弱めること","week":"週","weeks":"週","wish":"望む","wishes":"望む","work":"仕事、働く","worked":"働いた","worker":"労働者","workers":"労働者","working":"働いている","works":"仕事","year":"年","years":"年","yield":"利回り","yields":"利回り"};
+
+// ── QUESTION DATA ────────────────────────────────────────
+const QS={
+1:[
+{"n":1,"q":"The ------- advisor recommended diversifying the portfolio across multiple market segments to reduce overall risk.","cs":[["A","technical"],["B","financial"],["C","personal"],["D","medical"]],"ng":{"A":"技術的な、という意味。金融アドバイザーには使わない表現。","C":"個人的な、という意味。personal advisor も存在するが、投資・ポートフォリオの文脈では financial が適切。","D":"医療の、という意味。投資と無関係。"},"vocab":"financial / market","a":"B","w":"financial","jp":"財政の、金融の","ok":"「市場（market）セグメントにわたってポートフォリオを分散させる」という文脈から、金融・資産運用の専門家を表す financial advisor（金融アドバイザー）が正解。","u":1,"tag":"collocation"},
+{"n":2,"q":"The central bank announced it would keep the interest ------- unchanged to support the recovering economy.","cs":[["A","share"],["B","fund"],["C","rate"],["D","index"]],"ng":{"A":"株・シェアの意味。interest share という表現は一般的ではない。","B":"基金・ファンド。interest fund とは言わない。","D":"指標・指数。interest index という表現は存在しない。"},"vocab":"economy / rate","a":"C","w":"rate","jp":"レート、利率","ok":"interest rate（金利）は金融・経済の必須コロケーション。keep the interest rate unchanged（金利を据え置く）はTOEICで頻出の表現。economy（経済）は文末に登場。","u":1,"tag":"collocation"},
+{"n":3,"q":"Following the $3 billion acquisition, the company's ------- price increased by nearly 20% within a week.","cs":[["A","share"],["B","fund"],["C","asset"],["D","bond"]],"ng":{"B":"ファンドの「価格」は fund price とは通常言わない。NAV（純資産価値）と表現する。","C":"資産。asset price（資産価格）も存在するが、個別企業の文脈では share price が正確。","D":"債券。bond price も存在するが、株式取得（acquisition）の文脈と合わない。"},"vocab":"billion / share","a":"A","w":"share","jp":"株（式）","ok":"share price（株価）は最重要コロケーション。$3 billion（30億ドル）という買収（acquisition）の後に株価が上昇するという文脈に合致する。","u":1,"tag":"collocation"},
+{"n":4,"q":"Investors seeking steady ------- often prefer bonds, as they generate regular interest payments throughout the year.","cs":[["A","revenue"],["B","profit"],["C","yield"],["D","income"]],"ng":{"A":"企業が事業から得る売上収入。個人投資家には revenue より income を使うのが自然。","B":"費用を差し引いた後の利益・儲け。bonds（債券）の受取額にはincomeが適切で、profitは投機的取引の利益感がある。","C":"投資利回り（%）を指す語で、債券にも使う。ただし seek steady yield より seek steady income の方が自然な言い回し。最も紛らわしい選択肢。"},"vocab":"interest / income","a":"D","w":"income","jp":"収益、所得","ok":"steady income（安定した収益）は投資文脈で自然な表現。interest payments（利息の支払い）から得られるものはincome（所得・収益）。TOEICでもincome from investmentsは頻出。incomeは個人・投資家が受け取る収益として使われる。","u":1,"tag":"context"},
+{"n":5,"q":"The company's stock prices rose steadily during the third ------- of the year, exceeding all previous forecasts.","cs":[["A","period"],["B","quarter"],["C","decade"],["D","section"]],"ng":{"A":"期間全般を指す語。the third period of the year とは言わない。","C":"10年間の意味。the third decade of the year という表現は不自然。","D":"欄・セクション。第3セクションとは言わない。"},"vocab":"stock / quarter","a":"B","w":"quarter","jp":"四半期","ok":"the third quarter（第3四半期）は会計・ビジネスレポートで必須の表現。TOEICでは quarterly results, third quarter earnings などが頻出。stock（株式）は文頭に登場。","u":1,"tag":"collocation"},
+{"n":6,"q":"A new retirement ------- was established to invest contributions on behalf of individual consumers.","cs":[["A","account"],["B","credit"],["C","fund"],["D","policy"]],"ng":{"A":"口座。retirement account も存在するが、launch（立ち上げる）という動詞はfundとより自然に結びつく。","B":"信用・貸し付け。retirement credit という表現は一般的でない。","D":"方針・保険契約。文脈的に fund の方が自然。"},"vocab":"consumer / fund","a":"C","w":"fund","jp":"ファンド、基金","ok":"retirement fund（退職基金）は金融英語の基本表現。consumer（消費者・個人）の長期貯蓄を支援する商品として fund が最も適切。TOEICでも pension fund, investment fund が頻出。","u":1,"tag":"collocation"},
+{"n":7,"q":"Customers who wish to apply for a credit card must first open a ------- with the bank and maintain a minimum balance.","cs":[["A","account"],["B","statement"],["C","policy"],["D","report"]],"ng":{"B":"声明・明細書。open a statement とは言わない。bank statement（明細書）は存在するが、openとは結びつかない。","C":"方針・保険契約。open a policy は保険業界では使うが、銀行口座の文脈では不自然。","D":"報告書。open a report という表現は一般的でない。"},"vocab":"credit / account","a":"A","w":"account","jp":"口座","ok":"open an account（口座を開設する）はTOEICで最頻出の動詞句の一つ。クレジットカード（credit card）申請の前提として銀行口座を開設するという流れは、ビジネス英語として完全に自然。TOEICでもopen/close an accountは頻出。","u":1,"tag":"collocation"},
+{"n":8,"q":"During the financial -------, many companies were forced to halt their long-term investment projects indefinitely.","cs":[["A","reform"],["B","decline"],["C","shift"],["D","crisis"]],"ng":{"A":"改革。financial reform（金融改革）は存在するが、投資を「強制的に停止させる」原因としては不自然。","B":"低下。financial decline も可能だが、companies were forced to halt という強い表現には crisis がより適切。","C":"変化。financial shift は一般的な表現ではない。"},"vocab":"investment / crisis","a":"D","w":"crisis","jp":"危機","ok":"financial crisis（金融危機）はTOEICでも経済記事でも頻出の固定表現。investment（投資）プロジェクトが停止する原因として crisis が最も論理的。","u":1,"tag":"collocation"},
+{"n":9,"q":"The board adopted a new ------- requiring all managers to report the sale of any company assets immediately.","cs":[["A","statement"],["B","policy"],["C","schedule"],["D","survey"]],"ng":{"A":"声明・陳述。adopt a statement とは通常言わない。","C":"予定・スケジュール。adopt a schedule は不自然な組み合わせ。","D":"調査。adopt a survey とは言わない。"},"vocab":"asset / policy","a":"B","w":"policy","jp":"方針、ポリシー","ok":"adopt a policy（方針を採択する）はTOEICで頻出のコロケーション。asset（資産）の売却報告を義務づける社内ルールとして policy が最も適切。","u":1,"tag":"collocation"},
+{"n":10,"q":"The startup secured $4 million in ------- from private investors and plans to use the cash to hire additional engineers.","cs":[["A","capital"],["B","revenue"],["C","income"],["D","earnings"]],"ng":{"B":"企業が事業活動で稼いだ売上収入。investorsからsecureするものではなく、販売・サービスから得るもの。","C":"所得・収益。個人や企業が受け取る収入を指すが、投資家から調達するものにはcapitalを使う。","D":"企業の利益・収益（特に四半期・年間決算で使われる）。営業活動の結果として得るものであり、investorsからsecureする文脈には不自然。"},"vocab":"cash / capital","a":"A","w":"capital","jp":"資本","ok":"secure capital from investors（投資家から資本を調達する）はスタートアップ・ビジネス英語の重要表現。capital は「事業に投入する元手の資金」を指し、投資家から集めるもの。cash（現金）は文後半でその使途を説明する。TOEICでもraise capital, capital investment が頻出。","u":1,"tag":"semantics"},
+{"n":11,"q":"The CEO issued an official ------- outlining the company's plan to address the current economic downturn.","cs":[["A","invoice"],["B","estimate"],["C","statement"],["D","contract"]],"ng":{"A":"請求書。issuing an invoice はビジネス文書でも使うが、CEOが経済状況に対して出すものとして不適切。","B":"見積もり。issue an estimate は工事・サービス見積もりの場面で使う。","D":"契約書。issue a contract という表現は通常使わない。"},"vocab":"economic / statement","a":"C","w":"statement","jp":"声明、陳述","ok":"issue a statement（声明を出す）はTOEICの公式文書・プレスリリース問題で頻出。economic downturn（経済の下降）という状況へのCEOの公式対応として statement が最適。","u":1,"tag":"collocation"},
+{"n":12,"q":"The consulting ------- reported a 15% increase in annual revenue, driven largely by overseas contracts.","cs":[["A","agency"],["B","enterprise"],["C","division"],["D","firm"]],"ng":{"A":"広告・人材・旅行などの代理業に使う語。consulting agency は完全に誤りではないが、コンサルティング業界の文脈ではfirmが圧倒的に一般的。","B":"企業・事業体の意味。consulting enterprise とは通常言わない。enterpriseは大企業や事業全般を指す広い語。","C":"（企業内の）部門・事業部。単独で存在する会社ではなく、会社の一部を指す語なので文脈に合わない。"},"vocab":"revenue / firm","a":"D","w":"firm","jp":"会社、企業","ok":"consulting firm（コンサルティング会社）は英語ビジネス表現の定番。TOEICではlaw firm（法律事務所）、accounting firm（会計事務所）も頻出。revenue（収入）はその業績指標として文中に登場。firmは特に専門職サービス会社に使われる。","u":1,"tag":"collocation"},
+{"n":13,"q":"The committee agreed to ------- the new construction project, citing strong market demand for commercial properties.","cs":[["A","reduce"],["B","finance"],["C","forecast"],["D","balance"]],"ng":{"A":"削減する。「削減することに合意した」では文の後半（need funding）と矛盾。","C":"予測する。forecast a project とは言わない。","D":"バランスを取る。balance a project という表現は一般的でない。"},"vocab":"demand / finance","a":"B","w":"finance","jp":"資金調達する、融資する（動詞）","ok":"finance は名詞（財務）だけでなく動詞（資金を調達する・融資する）としても使われる。finance a project（プロジェクトに資金を提供する）はビジネス英語の重要表現。demand（需要）が資金提供の根拠として機能している。","u":1,"tag":"collocation"},
+{"n":14,"q":"Strong ------- skills are essential for executives responsible for planning budgets, supervising departments, and allocating company resources.","cs":[["A","management"],["B","leadership"],["C","communication"],["D","regulation"]],"ng":{"B":"最も紛らわしい選択肢。leadership skillsも実在し、executiveに必要なものとして文脈上も自然に見える。しかしmanagementは組織・業務・資源の運営という実務的側面を含むため","C":"communication skillsは存在するが、globalなmarketplaceでの事業活動全体を支える「中心的スキル」としてはmanagementが優先される。","D":"規制・法規。regulation skillsという表現は一般的でない。"},"vocab":"global / management","a":"A","w":"management","jp":"経営、マネジメント","ok":"management skills（マネジメントスキル）はビジネス英語の定番表現。global marketplaceで活躍するexecutiveに求められるものとして management が最も自然。TOEICでもmanagement team, management approach が頻出。managementは「人・資源・組織を動かすスキル」全般を指す。","u":1,"tag":"context"},
+{"n":15,"q":"New ------- regulations require all companies in the financial services sector to file quarterly compliance reports.","cs":[["A","annual"],["B","domestic"],["C","federal"],["D","commercial"]],"ng":{"A":"年間の。annual regulations という表現は一般的でない。","B":"国内の。domestic regulations も存在するが、quarterly filingを義務づける強制力の強い規制には federal が適切。","D":"商業の。commercial regulations は「商業規制」全般を指すが、filing義務の主体として federal の方が正確。"},"vocab":"sector / federal","a":"C","w":"federal","jp":"連邦の、中央政府の","ok":"federal regulations（連邦規制）はアメリカのビジネス・法律英語で頻出。financial services sector（金融サービス部門）が規制対象として明示されており、国家レベルの規制を意味するfederalが正解。TOEICでも federal government, federal agency が登場する。","u":1,"tag":"collocation"},
+],
+2:[
+{"n":1,"q":"The board of directors held an emergency meeting to address the issue of ------- pay and corporate governance.","cs":[["A","annual"],["B","national"],["C","executive"],["D","private"]],"ng":{"B":"年間の。annual pay は存在するが、corporate governance との文脈では executive が適切。","C":"国家の。national pay という表現は一般的でない。","D":"民間の・個人の。private pay も文法上は可だが、board / corporate governance との組み合わせでは executive が正確。"},"vocab":"issue / executive","a":"C","w":"executive","jp":"役員、幹部","ok":"executive pay（役員報酬）は企業統治（corporate governance）の文脈で最も自然なコロケーション。TOEICではchief executive officer（CEO）、executive team、executive committee なども頻出。issue（問題）は文頭に登場。","u":2,"tag":"collocation"},
+{"n":2,"q":"Leading economists have warned that a sudden rise in interest rates could weaken ------- confidence and slow retail spendingwth.","cs":[["A","consumer"],["B","investor"],["C","analyst"],["D","manager"]],"ng":{"A":"(B) investor: 投資家の信頼感は investor confidence として実在するが、retail spending（小売支出）との連動が強いのは consumer confiden","C":"分析者。analyst confidence という表現は一般的でない。","D":"経営者。manager confidence は通常使わない。"},"vocab":"economist / investor","a":"A","w":"consumer","jp":"投資家","ok":"consumer confidence（消費者の信頼感）は金利上昇局面で経済指標として頻出。interest rate 上昇が家計の支出意欲を抑制するという文脈と直結する。retail spending との対比で consumer が一意。登場する。","u":2,"tag":"context"},
+{"n":3,"q":"Banks are legally required to hold a minimum cash ------- during any period of economic uncertainty.","cs":[["A","balance"],["B","budget"],["C","fund"],["D","reserve"]],"ng":{"A":"残高・バランス。cash balance も実在するが、法的義務（legally required）のコンテキストではreserveが正確な用語。","B":"予算。cash budget は予算計画の一種だが、銀行規制の文脈ではreserveが適切。","C":"基金。cash fund も存在するが、銀行の最低保有義務にはreserveを使う。"},"vocab":"period / reserve","a":"D","w":"reserve","jp":"準備金、備え","ok":"cash reserve（現金準備金）は銀行規制・金融用語の定番表現。hold a reserve（準備金を保有する）はTOEICのfinancial regulation系文書で頻出。period（期間）は文中に登場。","u":2,"tag":"collocation"},
+{"n":4,"q":"Economists noted that a full economic recovery would depend on improvements in both productivity and ------- market conditions.","cs":[["A","labor"],["B","national"],["C","private"],["D","global"]],"ng":{"B":"national market も存在するが、productivity と並置される条件としてlaborが適切。","C":"private market は民間市場を指すが、雇用・生産性向上の文脈ではlabor が正確。","D":"global market も文脈上あり得るが、laborとのコロケーションが最も自然。"},"vocab":"labor / recovery","a":"A","w":"labor","jp":"労働","ok":"labor market（労働市場）はTOEICの経済・雇用関連文書で最も頻出のコロケーションの一つ。recovery（回復）が前半に登場し、その条件としてlabor market conditionsが挙げられる構造。","u":2,"tag":"collocation"},
+{"n":5,"q":"After completing the first half of the fiscal year, the project reported a ------- profit of $2.4 million.","cs":[["A","gross"],["B","net"],["C","annual"],["D","total"]],"ng":{"A":"最も紛らわしい選択肢。gross profit（総利益）は実在するが、費用控除後の利益を表す場合はnetが正しい。net対grossの区別はビジネス英語で重要なポイント。","C":"年間の。annual profit も存在するが、for the first half of the year という半期の文脈ではnetが適切。","D":"total profit も使えるが、会計用語としてはnetがより正確で頻出。"},"vocab":"process / net","a":"B","w":"net","jp":"純（の）、正味の","ok":"net profit（純利益）はTOEICの財務報告文書で必須の表現。grossが「総計」を指すのに対し、netは費用控除後の利益を意味する。process（手続き・過程）は文頭に登場。","u":2,"tag":"collocation"},
+{"n":6,"q":"The non-profit ------- submitted a detailed budget proposal to secure additional funding for its community programs.","cs":[["A","corporation"],["B","institution"],["C","organization"],["D","association"]],"ng":{"A":"企業・法人。corporationは営利目的が前提のため、non-profitとは矛盾する。","B":"機構・施設。educational institutionなどは自然だが、non-profit + budget proposal の文脈ではorganizationが最も一般的。","D":"協会・団体。non-profit associationも存在するが、TOEIC文書ではorganizationの方が圧倒的に頻出。"},"vocab":"budget / organization","a":"C","w":"organization","jp":"組織、団体","ok":"non-profit organization（非営利団体）はTOEICで頻出の表現。budget（予算）を提出してfunding（資金）を確保しようとする文脈と完全に一致する。","u":2,"tag":"collocation"},
+{"n":7,"q":"A financial ------- at the firm recommended shifting 20% of the portfolio from public equities to private equity.","cs":[["A","analyst"],["B","investor"],["C","economist"],["D","executive"]],"ng":{"B":"投資家は推奨を「受ける」側であり、推奨を「行う」のはanalyst。","C":"経済学者はマクロ経済分析が中心。ポートフォリオ配分の具体的推奨はanalystの役割。","D":"役員は意思決定者だが、具体的な投資推奨を行う職種としてはanalystが適切。"},"vocab":"private / analyst","a":"A","w":"analyst","jp":"分析者、アナリスト","ok":"financial analyst（金融アナリスト）はTOEICで頻出の職種表現。private equity（未公開株）への投資配分変更という具体的な推奨を行う主体として、analystが最も適切。","u":2,"tag":"collocation"},
+{"n":8,"q":"The branch ------- reported that sales were 8% above the national average during the third quarter.","cs":[["A","executive"],["B","director"],["C","supervisor"],["D","manager"]],"ng":{"A":"executiveは役員レベル。branch（支店）の責任者にはmanagerが適切。","B":"directorは取締役・部門長レベル。branch directorは使えなくはないが、ビジネス英語ではbranch managerがより一般的な表現。","C":"supervisorは現場監督レベルの語。branch全体の責任者としてはmanagerが適切。"},"vocab":"national / manager","a":"D","w":"manager","jp":"経営者、責任者","ok":"branch manager（支店長・支社マネージャー）はTOEICの企業内コミュニケーション問題で頻出の職種。national average（全国平均）に対する実績報告という文脈に自然に合致する。","u":2,"tag":"collocation"},
+{"n":9,"q":"The new health plan is available to employees in the ------- sector and includes dental and vision coverage.","cs":[["A","national"],["B","individual"],["C","private"],["D","separate"]],"ng":{"A":"全国の従業員ならnational employeesも可能だが、個別の福利厚生制度という文脈にはindividualが適切。","C":"(B) individual: individual は「個々の」の意味で、sector を修飾する語としては使わない。private sector が正しい固定表現。","D":"separate employeesは「別々の従業員」となり文意が変わる。"},"vocab":"benefit / individual","a":"C","w":"private","jp":"個々の","ok":"private sector（民間部門）は health plan の対象範囲を明示する語。benefit（福利厚生）の詳細が続くことで、民間企業の従業員向け制度という文脈が明確になる。","u":2,"tag":"context"},
+{"n":10,"q":"Effective from next month, all vendors will be required to submit invoices electronically to prevent a further ------- in processing efficiency.","cs":[["A","drop"],["B","decline"],["C","fall"],["D","reduction"]],"ng":{"A":"a drop in efficiencyも実際に使われる。dropは短期的・急激な下落を含意しやすく、declineよりやや非形式的。","C":"a fall in efficiencyも使われる表現。ただしdeclineの方がビジネス文書としてより標準的な語。","D":"reductionは意図的な削減を意味する。自然に生じる低下傾向にはdeclineが適切。"},"vocab":"require / decline","a":"B","w":"decline","jp":"低下","ok":"a decline in（〜の低下）はTOEICの業務効率・業績関連文書で最頻出の名詞句。require（義務付ける）は文前半に登場。decline は「継続的・緩やかな低下傾向」を示す語として業務効率や業績の文脈で最も適切。","u":2,"tag":"grammar"},
+{"n":11,"q":"The legislature enacted a ------- requiring all companies to maintain a minimum cash balance in their corporate accounts.","cs":[["A","bill"],["B","law"],["C","policy"],["D","regulation"]],"ng":{"B":"(A) bill: bill は「可決を待つ法案」を指す。enacted（制定された）と組み合わせる場合は、成立後の法律を意味する law が適切。","C":"pass a policyは不自然。policyはadopt / implementと組み合わせる。","D":"pass a regulationも語法上は使えるが、TOEICではpass a billが定番表現。"},"vocab":"balance / bill","a":"B","w":"law","jp":"法案","ok":"pass a bill（法案を可決する）はTOEICの法律・立法関連文書で必須の表現。balance（残高）は後半に登場。pass a billは自然な表現。billは立法案を指し、最終的に成立したものはlaw / actと呼ばれることが多い。","u":2,"tag":"collocation"},
+{"n":12,"q":"The government announced a plan to create a new regulatory body to oversee the trading of all financial -------.","cs":[["A","bonds"],["B","assets"],["C","equities"],["D","securities"]],"ng":{"A":"債券のみを指す語。規制対象が債券だけに限定されてしまい、文脈上は不十分。","B":"資産全般を指す広い語。financial assetsも可能だが、trading（取引）の対象としてはsecuritiesが正確な金融用語。","C":"株式のみを指す語。最も紛らわしい選択肢だが、securitiesの方が包括的で適切。"},"vocab":"create / securities","a":"D","w":"securities","jp":"証券","ok":"financial securities（金融証券）は株式・債券・デリバティブなどを包括する上位概念。regulatory body（監督機関）が管轄する対象として、最も広い範囲をカバーするsecuritiesが適切。create（設立する）は文頭に登場。","u":2,"tag":"collocation"},
+{"n":13,"q":"The corporation announced a major expansion plan that is expected to reduce local ------- by creating 500 new jobs.","cs":[["A","poverty"],["B","unemployment"],["C","inflation"],["D","deficit"]],"ng":{"A":"貧困。雇用創出が貧困削減につながることはあるが、500 jobs という直接的な効果の語としてはunemploymentが正確。","C":"インフレ。雇用創出はインフレに直接関係しない。","D":"赤字・財政赤字。雇用創出との論理的な連結が弱い。"},"vocab":"corporation / unemployment","a":"B","w":"unemployment","jp":"失業（率）","ok":"reduce unemployment（失業を削減する）はTOEICの企業・地域経済関連文書で頻出の表現。corporation（企業）による雇用創出（creating new jobs）の直接的な効果として、unemploymentが論理的に対応する。","u":2,"tag":"context"},
+{"n":14,"q":"The consumer price ------- rose 0.6% in March, reflecting a weakening national currency and higher import costs.","cs":[["A","rate"],["B","indicator"],["C","index"],["D","measure"]],"ng":{"A":"consumer price rateという表現は一般的でない。rateはinterest rate、exchange rateなど別の文脈で使う。","B":"指標という意味では近いが、consumer price indicatorは正式な経済用語でない。indexが正確。","D":"尺度・指標という意味では可能だが、consumer price measureは専門用語として使われない。"},"vocab":"currency / index","a":"C","w":"index","jp":"指標、指数","ok":"consumer price index（消費者物価指数、CPI）はTOEICの経済統計文書で必須の表現。currency（通貨）の下落と輸入コストの上昇がインフレの原因として論理的に説明されている。","u":2,"tag":"collocation"},
+{"n":15,"q":"According to the latest economic forecast, ------- yields are expected to rise gradually over the next two quarters.","cs":[["A","bond"],["B","stock"],["C","equity"],["D","share"]],"ng":{"B":"株式。stock yieldsも存在するがdividend yieldとして表現するのが一般的。金利上昇予測の文脈ではbondが最も自然。","C":"株式・純資産。equity yieldsという表現は一般的でない。","D":"株式（英国英語）。share yieldsも存在するが、金利との連動を扱う経済予測ではbond yieldsが定番。"},"vocab":"forecast / bond","a":"A","w":"bond","jp":"債券","ok":"bond yields（債券利回り）はTOEICの金融市場予測文書で頻出の表現。forecast（予測）は文頭に登場。bond yieldsとinterest ratesの連動関係は経済ニュースの定番テーマ。","u":2,"tag":"collocation"},
+],
+3:[
+{"n":1,"vocab":"project / estimate","q":"Before finalizing the budget, the finance team asked three independent analysts to ------- the total project costs.","cs":[["A","calculate"],["B","estimate"],["C","confirm"],["D","record"]],"a":"B","w":"estimate","jp":"推定する、見積もる","ok":"estimate（推定する、見積もる）はコストや数値をある程度の不確実さを認めつつ算出する動詞。コスト見積もりを依頼する場面で場面に使われる。文中に project costs（プロジェクトコスト）という名詞句があるため、project を動詞として使うと語が重複し不自然になる。","ng":{"A":"calculate: 計算する。数値的演算による正確な算出を意味し、構成要素が不明なコスト見積もりには estimate が適切。","C":"confirm: 確認する。まだ確定していないコストを見積もる場面には使わない。","D":"record: 記録する。数値を予測・見積もる文脈には合わない。"},"u":3,"tag":"semantics"},
+{"n":2,"vocab":"mortgage / major","q":"Rising interest rates have made it difficult for first-time buyers to obtain a ------- loan at an affordable rate.","cs":[["A","corporate"],["B","personal"],["C","mortgage"],["D","capital"]],"a":"C","w":"mortgage","jp":"住宅ローン、抵当","ok":"mortgage loan（住宅ローン）は不動産購入のための融資を指す定番表現。major（重要な）は文中の rising interest rates の影響を強調する文脈に登場。","ng":{"A":"corporate: 企業向けの。first-time buyers（初めて住宅を購入する個人）という個人文脈に合わない。","B":"personal: personal loan は実在するが、住宅購入に特化したローンは mortgage が正確。","D":"capital: 資本・元本。capital loan は一般的な表現でない。"},"u":3,"tag":"collocation"},
+{"n":3,"vocab":"purchase / supply","q":"The global ------- of key raw materials declined sharply last quarter, forcing manufacturers to reduce output and delay pending purchase orders.","cs":[["A","supply"],["B","demand"],["C","output"],["D","inventory"]],"a":"A","w":"supply","jp":"供給","ok":"global supply of raw materials（原材料の世界全体の供給）はマクロ経済・商品市場の表現として最も自然。purchase orders（注文）の遅延を引き起こす原因として、市場全体の「供給不足」を指す supply が最も適切。","ng":{"B":"demand: 需要。global demand declined は「需要が下がる」の意味になり、メーカーが困るという説明と矛盾する。","C":"output: 生産量。global output declined も可能だが、文後半の「forcing manufacturers to reduce output」と技術的に矛盾するため不可。","D":"inventory: 在庫。global inventory も実在するが、市場全体の品不足を表す場面では supply がより包括的で適切。"},"u":3,"tag":"semantics"},
+{"n":4,"vocab":"reform / interest rate","q":"The central bank voted to lower the benchmark ------- by 0.25% as part of a broader economic reform effort.","cs":[["A","margin"],["B","fee"],["C","premium"],["D","interest rate"]],"a":"D","w":"interest rate","jp":"利率、金利","ok":"lower the benchmark interest rate（基準金利を引き下げる）は中央銀行の金融政策を扱う文書で頻出の表現。reform（改革）は後半に登場し、金利引き下げが経済政策の一環であることを示す。","ng":{"A":"margin: 利幅・余地。lower the margin は文法上可能だが、中央銀行の政策文脈では interest rate が正確。","B":"fee: 料金・手数料。central bank が fee を下げるとは言わない。","C":"premium: 割増し金・プレミアム。リスク関連の文脈では使うが、中央銀行の政策金利には interest rate が適切。"},"u":3,"tag":"collocation"},
+{"n":5,"vocab":"recession / area","q":"The government allocated additional funding to the rural ------- most severely affected as the recession deepened nationwide.","cs":[["A","sector"],["B","area"],["C","branch"],["D","territory"]],"a":"B","w":"area","jp":"地域","ok":"rural area（農村地域）は政府の経済支援文書で頻出の表現。recession（不況）が全国的に深刻化する中で特定の地域に資金を配分する文脈に自然に合致。rural を加えることで地理的地域という文脈が明確になる。","ng":{"A":"sector: 部門・業界。sector は産業・業種を指す語で、rural と組み合わせると地理的地域でなく産業分頒の意味になり不自然。","C":"branch: 支店・支部。地理的地域の意味では使わない。","D":"territory: 領土・区域。地理的な意味はあるが、政府の経済支援文脈では area がより一般的。"},"u":3,"tag":"context"},
+{"n":6,"vocab":"inflation / fiscal","q":"The treasury department announced a new ------- policy aimed at reducing the national deficit while keeping inflation in check.","cs":[["A","monetary"],["B","economic"],["C","fiscal"],["D","financial"]],"a":"C","w":"fiscal","jp":"財政の、会計の","ok":"fiscal policy（財政政策）は政府の歳入・歳出に関わる政策を指す専門用語。treasury department（財務省）が策定し、national deficit（財政赤字）削減を目的とする政策として fiscal が最も正確。","ng":{"A":"monetary: 最も級びやすい選択肢。monetary policy（金融政策）は中央銀行が金利・通貨供給量で景気を調整するもの。treasury department が策定するのは fiscal policy。","B":"economic: 経済の。economic policy は広義の経済政策を指すが、deficit との直接的な対応には fiscal が適切。","D":"financial: 財務の。financial policy も存在するが、国家予算・税制を指す専門用語としては fiscal が正確。"},"u":3,"tag":"semantics"},
+{"n":7,"vocab":"contract / development","q":"The city council signed a five-year ------- with a private developer that included penalties for construction delays.","cs":[["A","contract"],["B","agreement"],["C","proposal"],["D","permit"]],"a":"A","w":"contract","jp":"契約書、契約","ok":"sign a contract（契約を結ぶ）はビジネス・法律英語で頻出の表現。five-year（５年間の）という具体的な期間と private developer との取引を法的に拘束するものとして contract が適切。development（開発）は文後半に登場。","ng":{"B":"agreement: 合意書・協定。agreement も sign とともに使えるが、ペナルティ条項を含む契約文書としては contract が適切。agreement にはペナルティの含意が弱い。","C":"proposal: 提案書。proposal はまだ合意に至っていない段階の文書。sign a proposal とは言わない。","D":"permit: 許可証。sign a permit とは通常言わない。"},"u":3,"tag":"collocation"},
+{"n":8,"vocab":"wage / deficit","q":"The government's plan to raise the national minimum ------- is expected to boost household income and help reduce growing income inequality.","cs":[["A","income"],["B","salary"],["C","earnings"],["D","wage"]],"a":"D","w":"wage","jp":"賃金","ok":"minimum wage（最低賃金）は経済英語で頻出の固定表現。deficit（赤字）はを削減する目標。income inequality（所得格差）は後半に登場。wage は時給・日給など時間単位の賃金を指し、minimum wage は法定最低限の賃金制度を表す定番語。","ng":{"A":"income: 所得・収入。minimum income も存在するが、法定賃金の文脈では minimum wage が標準表現。","B":"salary: 最も級びやすい選択肢。salary は月給・月給・年収形式の報酬を指す。minimum salary とは言わず、minimum wage が正確。","C":"earnings: 収益・稼ぎ。minimum earnings という表現は一般的でない。"},"u":3,"tag":"collocation"},
+{"n":9,"vocab":"monetary / earnings","q":"The company released its quarterly ------- report, showing a 14% increase in net income despite challenging monetary conditions.","cs":[["A","budget"],["B","earnings"],["C","forecast"],["D","income"]],"a":"B","w":"earnings","jp":"収入、収益、利益","ok":"earnings report（決算報告書）は企業財務文書で頻出の固定表現。quarterly earnings report は四半期ごとの業績発表として使われる。monetary（通貨の）は後半で difficult monetary conditions として登場。","ng":{"A":"budget: 予算。quarterly budget report も存在するが、決算結果を発表する定期報告書としては earnings report が標準。","C":"forecast: 予測。quarterly forecast report も存在するが、実績を報告する文脈（showing a 14% increase）には過去の数値を報告する earnings が適切。","D":"income: 所得・収益。income report は存在するが、四半期ごとの公式発表としては earnings report が最も一般的。"},"u":3,"tag":"collocation"},
+{"n":10,"vocab":"focus / resource","q":"The new management team decided to ------- its efforts on expanding digital services rather than investing in additional physical resources.","cs":[["A","focus"],["B","direct"],["C","apply"],["D","transfer"]],"a":"A","w":"focus","jp":"集中する","ok":"focus efforts on（〜に努力を集中させる）はビジネス英語の頻出表現。resource（資源・リソース）は後半に登場。focus on は「特定の優先事項に経営資源を向ける」という戦略的文脈で自然に使われる。","ng":{"B":"direct: 向ける。direct efforts on も文法上は使えるが、focus on の方がビジネス文書でよく使われる表現。","C":"apply: 適用する。apply efforts は自然な表現ではない。","D":"transfer: 移転する。transfer efforts という表現は一般的でない。"},"u":3,"tag":"collocation"},
+{"n":11,"vocab":"treasury / expense","q":"All travel ------- must be reported to the accounting department within 30 days and approved by the Treasury Division.","cs":[["A","costs"],["B","charges"],["C","expenses"],["D","fees"]],"a":"C","w":"expenses","jp":"出費、経費","ok":"travel expenses（出張経費）はTOEICの社内手続き文書で頻出の表現。All travel expenses must be submitted のように必ず複数形で使用する。submit expenses（経費を提出する）も定番コロケーション。treasury（財務）は後半で Treasury Division として登場。","ng":{"A":"costs: コスト・費用。travel costs も使われるが、社内の経費精算文脈では travel expenses が標準表現。","B":"charges: 料金・請求額。費用の請求側を含意し、社員が申請する経費には expenses が適切。","D":"fees: 手数料。travel fees という表現は一般的でない。"},"u":3,"tag":"collocation"},
+{"n":12,"vocab":"deposit / lend","q":"The bank announced that it would no longer ------- to small businesses with less than two years of operating history.","cs":[["A","invest"],["B","offer"],["C","fund"],["D","lend"]],"a":"D","w":"lend","jp":"貸し出す","ok":"lend to（〜に貸し付ける）は銀行業務の基本動詞。deposit（預金）は文前半の bank と関連する背景語彙。lend money / lend to businesses は金融機関が資金を提供する際に使う正確な語。","ng":{"A":"invest: 投資する。invest in は株式や資産への投資を指し、銀行ローンの貸し付けには lend が適切。","B":"offer: 提供する。offer loans とは言えるが、no longer offer to とすると意味が広くなりすぎる。","C":"fund: 資金を提供する。fund も意味は近いが、銀行がローンを貸す動詞としては lend が最も正確。"},"u":3,"tag":"grammar"},
+{"n":13,"vocab":"announce / employer","q":"The survey found that 72% of workers consider their ------- a good place to work, with benefits and job security cited as key factors.","cs":[["A","corporation"],["B","employer"],["C","organization"],["D","institution"]],"a":"B","w":"employer","jp":"雇用主","ok":"employer（雇用主）は従業員・労働者視点での「雇用する側の主体」を指す語。work for（〜のために就労する）という表現との組み合わせで employer が最も自然。announce（発表する）は文前半に登場。","ng":{"A":"corporation: 企業・法人。corporation は組織の法的形態を指し、work for の目的語としては employer がより自然。","C":"organization: 組織。organization も可能だが、雇用関係を明示する worker の視点では employer が適切。","D":"institution: 機関・施設。educational institution などでは使うが、work for の対象としては employer が正確。"},"u":3,"tag":"context"},
+{"n":14,"vocab":"regulator / target","q":"The project team set an ambitious ------- of reducing carbon emissions by 40% over the next five years, in response to new regulatory requirements.","cs":[["A","target"],["B","penalty"],["C","projection"],["D","benchmark"]],"a":"A","w":"target","jp":"目標","ok":"set a target（目標を設定する）はビジネス・環境報告書で頻出の表現。regulator（規制当局）は後半で regulatory requirements として登場。target は数値的・定量的な目標に特に適した語。","ng":{"B":"penalty: 罰則・罰金。set a penalty という表現は一般的でなく、プロジェクト目標の設定には使わない。","C":"projection: 予測・予測値。projection は将来の状況についての「予測」であり、達成しようとする「目標」ではない。set a projection とは言わず、issue / make a projection が自然。","D":"benchmark: 基準値・指標。benchmark は比較の基準を指す語で、削減目標の設定には target が正確。"},"u":3,"tag":"context"},
+{"n":15,"vocab":"shareholder / competition","q":"The company faced intense ------- as low-cost overseas producers entered the domestic market, prompting a strategic review and stronger returns pledged to shareholders.","cs":[["A","pressure"],["B","demand"],["C","competition"],["D","regulation"]],"a":"C","w":"competition","jp":"競争","ok":"intense competition from low-cost overseas producers（低コストの海外メーカーからの激しい競争）はビジネス英語の定番表現。shareholder（株主）は後半に登場。競争への対応としてストラテジー見直しを指示する構造が論理的。","ng":{"A":"pressure: pressure from rivals も文法上自然だが、海外メーカーがマーケットに参入するという具体的な事実を表す語としては competition が正確。","B":"demand: 需要。intense demand from low-cost producers は意味上不自然（producers は需要を生む側でない）。","D":"regulation: 規制。overseas producers からの規制という組み合わせは意味上成立しない。"},"u":3,"tag":"context"},
+],
+4:[
+{"n":1,"vocab":"design / export","q":"The board of directors approved a new overseas sales initiative to ------- premium products to five markets in Southeast Asia next year.","cs":[["A","import"],["B","export"],["C","expand"],["D","deliver"]],"a":"B","w":"export","jp":"輸出する","ok":"export（輸出する）は “export products to markets” という構文で他動詞として使う。design は製品設計・ブランドの文脈で登場。","ng":{"A":"import: 「輸入」で方向が逆。新市場への展間とは意味が矛盾する。","C":"expand: expand は自動詞的用法では “expand into markets” が正しく、expand products to markets という他動詞用法は構文上不自然。","D":"deliver: deliver も “deliver products to markets” と文法上は成立するが、新市場への国際展間を表す文脈では export が適切。deliver は既存取引の配送を指す語で、この文脈の焦点とは合わない。"},"u":4,"tag":"context"},
+{"n":2,"vocab":"corporate / annual","q":"The firm released its ------- earnings report for the fiscal year ending March 31, which showed a 12% increase in corporate revenues.","cs":[["A","initial"],["B","quarterly"],["C","annual"],["D","revised"]],"a":"C","w":"annual","jp":"年次の","ok":"annual earnings report（年次決算報告書）は定期報告書の標準表現。“for the fiscal year ending March 31” が 12 ヶ月間の報告書であることを明示しており、annual 以外は成立しない。corporate は “corporate revenues” として登場。","ng":{"A":"initial: 「初回の」で定期報告ではない。","B":"quarterly: 3 ヶ月ごとの報告を指し、“for the fiscal year ending” という通期全体を対象とする表現と矛盾する。","D":"revised: 「修正版」を指し、定期的な決算報告の性格と矛盾する。"},"u":4,"tag":"collocation"},
+{"n":3,"vocab":"board / equity","q":"The ------- of directors voted unanimously to restructure the company's equity holdings following a significant market downturn.","cs":[["A","board"],["B","committee"],["C","panel"],["D","division"]],"a":"A","w":"board","jp":"取締役会、委員会","ok":"board of directors（取締役会）は法人統治の固定表現。board 以外をこの構文に入れると実在しない組織名になる。equity は “equity holdings” として登場。","ng":{"B":"committee: committee of directors は標準的な法人統治用語ではない。","C":"panel: panel of directors も標準的な法人統治用語ではない。","D":"division: division of directors は組織名として通常使われない語であり、この構文には合わない。"},"u":4,"tag":"collocation"},
+{"n":4,"vocab":"impact / regulation","q":"Manufacturers must now comply with a new environmental ------- that requires full disclosure of carbon emissions at each production facility.","cs":[["A","policy"],["B","impact"],["C","procedure"],["D","regulation"]],"a":"D","w":"regulation","jp":"規制","ok":"comply with a regulation（規制を遵守する）は法律英語の固定コロケーション。impact は “have an impact” または “impact on” の構文で使う語であり、“comply with an impact” はコロケーション違反。","ng":{"A":"policy: comply with a policy も可能だが、排出量開示の法的義務を課す文脈では regulation が最も適切な用語。","B":"impact: comply with an impact はコロケーション違反。impact はまた剒 have / make / reduce などと組み合わせる語。","C":"procedure: procedure は内部の手続き・手順を指す語で、政府が企業に課す外部規制には使わない。"},"u":4,"tag":"grammar"},
+{"n":5,"vocab":"retail / survey","q":"The latest customer ------- results showed that 74% of respondents preferred retail locations with extended hours, driving a major redesign of the store network.","cs":[["A","report"],["B","survey"],["C","analysis"],["D","estimate"]],"a":"B","w":"survey","jp":"調査","ok":"survey results（調査結果）は回答率・パーセンテージデータの出所を示す正確な用語。“74% of respondents” は survey の回答者（respondents）であり、構造的に survey が要求される。retail は “retail locations” として登場。","ng":{"A":"report: report は respondents を持たない文書形式。“74% of respondents” という構造と合わない。","C":"analysis: analysis には respondents が存在しない。回答者比率データの出所としては survey が適切。","D":"estimate: estimate results という表現は通常使わない（コロケーション違反）。"},"u":4,"tag":"collocation"},
+{"n":6,"vocab":"inventory / role","q":"Efficient supply chain management plays a key ------- in minimizing excess inventory and reducing overall operating costs.","cs":[["A","function"],["B","position"],["C","role"],["D","factor"]],"a":"C","w":"role","jp":"役割","ok":"plays a key role in（〜において重要な役割を果たす）はビジネス英語の固定コロケーション。inventory は “excess inventory” として登場。","ng":{"A":"function: plays a key function in という構文は通常使わない。function は “serve a function” または “the function of” の形で使うのが標準。","B":"position: plays a key position in という構文は通常使わない。","D":"factor: plays a key factor in という構文は通常使わない。factor は “is a key factor in” の形で使うのが標準。"},"u":4,"tag":"collocation"},
+{"n":7,"vocab":"commission / institution","q":"The new banking reform package requires every financial ------- that offers mortgage services to disclose all associated fees and commission charges to customers.","cs":[["A","institution"],["B","agency"],["C","division"],["D","committee"]],"a":"A","w":"institution","jp":"機構、組織","ok":"financial institution（金融機関）は銀行・信用組合・住宅ローン提供機関を包括する法律・規制上の正式用語。commission は “commission charges” として登場。","ng":{"B":"agency: agency は政府機関・代理店を指す語で、mortgage services を提供する民間金融機関には通常使わない。","C":"division: division は企業内の「部門」を指し、独立して mortgage を提供する主体にはなれない。","D":"committee: committee は会議体・委員会を指す語で、金融サービスを提供する組織ではない。"},"u":4,"tag":"collocation"},
+{"n":8,"vocab":"release / research","q":"The government agency is expected to ------- the results of its six-month research review to the public next week.","cs":[["A","submit"],["B","revise"],["C","comply"],["D","release"]],"a":"D","w":"release","jp":"公開する、発表する","ok":"release（公開する）は「情報・結果を一般公開する」という意味で、機関が調査結果を public に向けて発表する行為の正確な動詞。research は “research review” として登場。","ng":{"A":"submit: submit は「上位機関に提出する」の意味で、public への公表とは方向が異なる。","B":"revise: revise は「改訂・修正する」の意味で、公表する行為とは異なる概念。","C":"comply: comply は自動詞で “comply with ...（〜を遵守する）” の形で使い、results を直接目的語に取ることができない。文法上の不一致。"},"u":4,"tag":"grammar"},
+{"n":9,"vocab":"approach / goal","q":"The new management team set a long-term ------- of doubling the company's domestic market share within five years by expanding its retail network.","cs":[["A","mission"],["B","goal"],["C","obligation"],["D","commission"]],"a":"B","w":"goal","jp":"目的、目標","ok":"set a goal of doing（〜するという目標を設定する）はビジネス英語の固定コロケーション。goal of + 動名詞が成立する。approach は “step-by-step approach” として文中に登場。","ng":{"A":"mission: set a mission of doing という構文は通常使わない。mission は “our mission is to” の形で使うのが標準。","C":"obligation: obligation は外部から課される義務を指す語であり、経営チームが自ら “set” するものではない。","D":"commission: set a commission of doing という構文は通常使わない。commission は委員会または手数料を指す語。"},"u":4,"tag":"collocation"},
+{"n":10,"vocab":"employment / domestic","q":"Analysts noted that strong ------- demand helped offset the decline in exports, supporting overall employment levels throughout the recession.","cs":[["A","domestic"],["B","internal"],["C","national"],["D","local"]],"a":"A","w":"domestic","jp":"国内の","ok":"domestic demand（国内需要）は輸出（exports）との対比として登場する経済英語の定番表現。employment は “employment levels” として登場。","ng":{"B":"internal: internal demand という表現は経済統計・ビジネス文書では通常使わない。","C":"national: 経済統計・ビジネス文書では domestic demand が標準的で、exports との対比にも最も合う表現。","D":"local: local demand は特定地域の需要を指す語で、国全体の輸出との対比には domestic が正確。"},"u":4,"tag":"context"},
+{"n":11,"vocab":"technology / Inc.","q":"The company invested $40 million in clean ------- solutions to improve battery performance and reduce production costs at its largest plant.","cs":[["A","science"],["B","research"],["C","technology"],["D","inventory"]],"a":"C","w":"technology","jp":"技術","ok":"clean technology solutions（クリーンテクノロジー・ソリューション）は環境・エネルギー産業の確立した専門用語。Inc. は文中の企業名に登場。","ng":{"A":"science: clean science solutions という表現は通常使わない（コロケーション違反）。","B":"research: clean research solutions という表現は通常使わない。“clean research” は標準的なコロケーションではない。","D":"inventory: inventory（在庫・棚卸資産）は製品の保管量を指す語であり、技術的ソリューションの種類を表す語ではない。"},"u":4,"tag":"collocation"},
+{"n":12,"vocab":"legal / strategy","q":"The board approved a five-year ------- to restructure the firm's legal services division and expand into three additional domestic markets.","cs":[["A","regulation"],["B","fee"],["C","survey"],["D","strategy"]],"a":"D","w":"strategy","jp":"戦略","ok":"approve a strategy（戦略を承認する）は取締役会の行為として正確なコロケーション。legal は “legal services division” として登場。","ng":{"A":"regulation: five-year regulation to restructure という組み合わせはこの文脈では不自然。regulation は「規制・法規」を指す語で、経川戦略の承認には使わない。","B":"fee: approve a fee は可能だが、five-year fee to restructure という構造は意味をなさない。コロケーション違反。","C":"survey: approve a survey to restructure という構造は意味をなさない。コロケーション違反。"},"u":4,"tag":"collocation"},
+{"n":13,"vocab":"chairman / fee","q":"Board members raised concerns about the $50,000 consulting ------- paid to the chairman's advisory firm without prior board approval.","cs":[["A","rate"],["B","fee"],["C","survey"],["D","cost"]],"a":"B","w":"fee","jp":"料金、手数料","ok":"consulting fee（コンサルティング料金）。“paid a fee” は単発の報酬支払いの標準表現。chairman は “chairman's advisory firm” として登場。","ng":{"A":"rate: paid a consulting rate は通常使わない構文。rate は “charged at a rate of” の形で使うのが標準。","C":"survey: survey（調査・アンケート）は完全に異なる意味分野の語であり、consulting への報酬として consulting survey という表現は意味上成立しない。","D":"cost: paid a consulting cost は通常使わない。cost は総費用の概念語で、個別支払いには fee が適切。"},"u":4,"tag":"collocation"},
+{"n":14,"vocab":"plant / seek","q":"The company will ------- additional research funding from government institutions and private investors to build a new overseas plant.","cs":[["A","seek"],["B","submit"],["C","release"],["D","comply"]],"a":"A","w":"seek","jp":"求める、要求する","ok":"seek funding from（〜から資金を求める）はビジネス・研究文書の定番表現。plant は “overseas plant” として登場。","ng":{"B":"submit: submit funding は意味上の矛盾。submit は資料・申請書を提出する語であり、funding（資金）を submit することはできない。","C":"release: release funding は「資金を放出・交付する」の意味になり、主語が資金を受け取る側（the company）であることと矛盾する。","D":"comply: comply は自動詞で “comply with” の形で使い、funding を直接目的語に取れない。文法上の不一致。"},"u":4,"tag":"grammar"},
+{"n":15,"vocab":"Co. / method","q":"The consultant recommended a new ------- of calculating inventory turnover that would reduce waste and improve inventory accuracy across all retail locations.","cs":[["A","approach"],["B","strategy"],["C","method"],["D","regulation"]],"a":"C","w":"method","jp":"方法","ok":"method of calculating（〜を計算する方法）は前置詞 “of” を取る固定構文。Co. は “Sterling Manufacturing Co.” として登場。","ng":{"A":"approach: approach of calculating は通常使わない。approach は “approach to calculating” または “approach for calculating” と前置詞 to / for を取る。of を取らないため文法上の不一致。","B":"strategy: strategy of calculating は通常使わない。strategy は “strategy for calculating” と前置詞 for を取る。of を取らないため文法上の不一致。","D":"regulation: regulation（規制・法規）は inventory turnover の計算方法を指す語ではない。意味の分野が全く異なる。"},"u":4,"tag":"grammar"},
+],
+};
+
+const TAG_LABELS={collocation:"コロケーション",grammar:"文法・語法",semantics:"語義・意味",context:"文脈判断"};
+
+// ── STORAGE LAYER ────────────────────────────────────────
+// window.storage (Claude.ai) and localStorage (general browsers) compatible
+const STORE = {
+  _key: (id, name, unit) => `toeic:${id}-${name}-u${unit}`,
+  async get(id, name, unit){
+    const k = this._key(id, name, unit);
+    try {
+      if (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
+        const r = await window.storage.get(k);
+        return r ? JSON.parse(r.value) : null;
+      }
+      const v = localStorage.getItem(k);
+      return v ? JSON.parse(v) : null;
+    } catch(e){ return null; }
+  },
+  async set(id, name, unit, data){
+    const k = this._key(id, name, unit);
+    const json = JSON.stringify(data);
+    try {
+      if (typeof window !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
+        await window.storage.set(k, json);
+        return;
+      }
+      localStorage.setItem(k, json);
+    } catch(e){ /* silent */ }
+  },
+  async del(id, name, unit){
+    const k = this._key(id, name, unit);
+    try {
+      if (typeof window !== 'undefined' && window.storage && typeof window.storage.delete === 'function') {
+        await window.storage.delete(k);
+        return;
+      }
+      localStorage.removeItem(k);
+    } catch(e){ /* silent */ }
+  }
+};
+
+const {useState,useEffect,useCallback,useRef}=React;
+
+function useVoice(){
+  const [locale,setLocale]=useState("en-US");
+  const [slow,setSlow]=useState(false);
+  const [activeId,setActiveId]=useState(null);
+  const cancel=useCallback(()=>{window.speechSynthesis?.cancel();setActiveId(null);},[]);
+  const speak=useCallback((text,id)=>{
+    if(!window.speechSynthesis)return;
+    if(activeId===id){cancel();return;}
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=locale;u.rate=slow?0.85:1.15;
+    const vs=window.speechSynthesis.getVoices();
+    const v=vs.find(x=>x.lang===locale&&/female|zira|samantha|karen|victoria|moira/i.test(x.name))||vs.find(x=>x.lang===locale)||vs.find(x=>x.lang.startsWith(locale.slice(0,2)));
+    if(v)u.voice=v;
+    u.onend=()=>setActiveId(null);u.onerror=()=>setActiveId(null);
+    setActiveId(id);window.speechSynthesis.speak(u);
+  },[locale,slow,activeId,cancel]);
+  return{locale,setLocale,slow,setSlow,speak,cancel,activeId};
+}
+
+// 辞書ルックアップ：直接 → 'sを除く → -s → -es → -ies→y → -ed → -e付き → -ing → -ing+e
+function lookupWord(w){
+  if(!w)return null;
+  if(VOCAB[w])return VOCAB[w];
+  // possessive 's
+  if(w.includes("'")){
+    const base=w.split("'")[0];
+    if(VOCAB[base])return VOCAB[base];
+  }
+  // -ies → y (companies → company)
+  if(w.endsWith("ies")&&w.length>4){
+    const cand=w.slice(0,-3)+"y";
+    if(VOCAB[cand])return VOCAB[cand];
+  }
+  // -es (processes → process)
+  if(w.endsWith("es")&&w.length>3){
+    if(VOCAB[w.slice(0,-2)])return VOCAB[w.slice(0,-2)];
+    if(VOCAB[w.slice(0,-1)])return VOCAB[w.slice(0,-1)]; // "es" → "e"
+  }
+  // -s plural / 3rd-person
+  if(w.endsWith("s")&&!w.endsWith("ss")&&w.length>3){
+    if(VOCAB[w.slice(0,-1)])return VOCAB[w.slice(0,-1)];
+  }
+  // -ied → y (applied → apply)
+  if(w.endsWith("ied")&&w.length>4){
+    const cand=w.slice(0,-3)+"y";
+    if(VOCAB[cand])return VOCAB[cand];
+  }
+  // -ed
+  if(w.endsWith("ed")&&w.length>3){
+    if(VOCAB[w.slice(0,-2)])return VOCAB[w.slice(0,-2)];
+    if(VOCAB[w.slice(0,-1)])return VOCAB[w.slice(0,-1)]; // remove just -d (e.g. announced→announce)
+  }
+  // -ing
+  if(w.endsWith("ing")&&w.length>4){
+    if(VOCAB[w.slice(0,-3)])return VOCAB[w.slice(0,-3)];
+    if(VOCAB[w.slice(0,-3)+"e"])return VOCAB[w.slice(0,-3)+"e"]; // releasing → release
+  }
+  return null;
+}
+
+function TokenQ({q,vocab,vocabPair,popup,setPopup}){
+  const blank="_______";
+  const display=q.replace("-------",blank);
+  // 除外語の集合：正解語 + ペアの両端
+  const excluded=new Set();
+  if(vocab)excluded.add(vocab.toLowerCase());
+  if(vocabPair){
+    vocabPair.split("/").forEach(p=>{
+      const clean=p.trim().toLowerCase();
+      if(clean)excluded.add(clean);
+    });
+  }
+  return React.createElement("div",{style:{lineHeight:1.95,fontSize:16}},
+    display.split(/(\s+|[,\.!?;:]+)/).map((tok,i)=>{
+      if(!tok.trim())return React.createElement("span",{key:i},tok);
+      if(tok===blank)return React.createElement("span",{key:i,style:{display:"inline-block",minWidth:80,borderBottom:"2px solid #333",fontWeight:500,textAlign:"center",margin:"0 2px"}},tok);
+      const clean=tok.toLowerCase().replace(/[^a-z'\-]/g,"");
+      if(!clean)return React.createElement("span",{key:i},tok);
+      // 除外：正解語そのもの・ペア語
+      if(excluded.has(clean))return React.createElement("span",{key:i},tok);
+      // 除外：活用形でも正解・ペア語にマッチする場合（例：reduced は reduce が正解語なら除外）
+      let stripped=clean;
+      if(clean.includes("'"))stripped=clean.split("'")[0];
+      // Check normalized form against excluded set
+      const normForms=[stripped];
+      if(stripped.endsWith("ies"))normForms.push(stripped.slice(0,-3)+"y");
+      if(stripped.endsWith("es")&&stripped.length>3){normForms.push(stripped.slice(0,-2));normForms.push(stripped.slice(0,-1));}
+      if(stripped.endsWith("s")&&!stripped.endsWith("ss")&&stripped.length>3)normForms.push(stripped.slice(0,-1));
+      if(stripped.endsWith("ed")&&stripped.length>3){normForms.push(stripped.slice(0,-2));normForms.push(stripped.slice(0,-1));}
+      if(stripped.endsWith("ing")&&stripped.length>4){normForms.push(stripped.slice(0,-3));normForms.push(stripped.slice(0,-3)+"e");}
+      if(normForms.some(n=>excluded.has(n)))return React.createElement("span",{key:i},tok);
+      // 辞書ルックアップ
+      const def=lookupWord(clean);
+      if(!def)return React.createElement("span",{key:i},tok);
+      const active=popup===clean;
+      return React.createElement("span",{key:i,style:{display:"inline"}},
+        React.createElement("button",{className:"vocab-underline"+(active?" active":""),onClick:()=>setPopup(active?null:clean)},tok),
+        active&&React.createElement("span",{className:"popup-def"},def)
+      );
+    })
+  );
+}
+
+function VoiceBar({voice,qText,qN}){
+  const spoken=qText.replace("-------","blank")+". (A) — (B) — (C) — (D)";
+  return React.createElement("div",{style:{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}},
+    React.createElement("button",{className:"voice-btn"+(voice.activeId===`q${qN}`?" active":""),onClick:()=>voice.speak(spoken,`q${qN}`)},voice.activeId===`q${qN}`?"■ 停止":"▶ 読む"),
+    React.createElement("button",{className:"voice-btn"+(voice.locale==="en-US"?" active":""),onClick:()=>voice.setLocale("en-US")},"US"),
+    React.createElement("button",{className:"voice-btn"+(voice.locale==="en-GB"?" active":""),onClick:()=>voice.setLocale("en-GB")},"UK"),
+    React.createElement("button",{className:"voice-btn"+(voice.slow?" active":""),onClick:()=>voice.setSlow(s=>!s)},voice.slow?"ゆっくり":"普通")
+  );
+}
+
+function StartScreen({onStart}){
+  const [id,setId]=useState("");
+  const [name,setName]=useState("");
+  const [unit,setUnit]=useState(1);
+  const [savedUnits,setSavedUnits]=useState({});
+  const [resumeOffer,setResumeOffer]=useState(null); // {unit, pos}
+  const teacher=id==="22"&&name==="22";
+  const unitInfo=["Words 1–30","Words 31–60","Words 61–90","Words 91–120"];
+
+  // Check saved progress whenever id/name changes (debounced lightly)
+  useEffect(()=>{
+    if(teacher||!id.trim()||!name.trim()){setSavedUnits({});setResumeOffer(null);return;}
+    let cancelled=false;
+    (async()=>{
+      const found={};
+      for(const u of [1,2,3,4]){
+        const d=await STORE.get(id,name,u);
+        if(d&&d.history&&d.history.length<15&&!d.completed)found[u]=d;
+      }
+      if(!cancelled){
+        setSavedUnits(found);
+        // Auto-offer resume if current selected unit has progress
+        if(found[unit])setResumeOffer({unit,data:found[unit]});
+        else setResumeOffer(null);
+      }
+    })();
+    return()=>{cancelled=true;};
+  },[id,name,teacher,unit]);
+
+  const handleStart=()=>{
+    if(!id.trim()||!name.trim())return;
+    onStart({id,name,unit,teacher,resume:null});
+  };
+  const handleResume=()=>{
+    onStart({id,name,unit:resumeOffer.unit,teacher,resume:resumeOffer.data});
+  };
+  const handleClearAndStart=async()=>{
+    await STORE.del(id,name,unit);
+    setSavedUnits(s=>{const c={...s};delete c[unit];return c;});
+    setResumeOffer(null);
+    onStart({id,name,unit,teacher,resume:null});
+  };
+
+  return React.createElement("div",{style:{paddingTop:8}},
+    React.createElement("h2",{style:{fontSize:20,fontWeight:600,marginBottom:4,letterSpacing:"-0.01em"}},"TOEIC 語彙練習"),
+    React.createElement("p",{style:{fontSize:12,color:"#888",marginBottom:18}},"南雲堂テキスト Unit 1–4 PART 5"),
+    teacher&&React.createElement("div",{className:"teacher-badge"},"TEACHER MODE 有効"),
+    React.createElement("div",{className:"card",style:{marginBottom:12}},
+      React.createElement("p",{style:{fontSize:12,color:"#888",marginBottom:8}},"出席番号と名前を入力"),
+      React.createElement("div",{style:{display:"flex",gap:8}},
+        React.createElement("input",{placeholder:"出席番号",value:id,onChange:e=>setId(e.target.value),style:{flex:"0 0 110px"},inputMode:"numeric"}),
+        React.createElement("input",{placeholder:"名前",value:name,onChange:e=>setName(e.target.value),style:{flex:1}})
+      )
+    ),
+    React.createElement("div",{className:"card",style:{marginBottom:14}},
+      React.createElement("p",{style:{fontSize:12,color:"#888",marginBottom:10}},"Unit を選択（オレンジ = 中断あり）"),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}},
+        [1,2,3,4].map(u=>{
+          const hasProg=!!savedUnits[u];
+          let cls="unit-btn";
+          if(hasProg)cls+=" has-progress";
+          if(unit===u)cls+=" active";
+          return React.createElement("button",{key:u,className:cls,onClick:()=>setUnit(u)},
+            React.createElement("div",{style:{fontWeight:500,fontSize:15}},"Unit ",u),
+            React.createElement("div",{style:{fontSize:11,opacity:.7,marginTop:2}},unitInfo[u-1]),
+            hasProg&&React.createElement("div",{style:{fontSize:10,color:"#854F0B",marginTop:3}},
+              "▶ ",savedUnits[u].history.length,"問目から再開")
+          );
+        })
+      )
+    ),
+    resumeOffer&&React.createElement("div",{className:"resume-banner"},
+      React.createElement("div",null,"📌 Unit ",resumeOffer.unit," の続きから再開できます（",resumeOffer.data.history.length,"問完了 / 15問）"),
+      React.createElement("div",{className:"actions"},
+        React.createElement("button",{className:"primary",onClick:handleResume},"続きから再開"),
+        React.createElement("button",{onClick:handleClearAndStart},"最初からやり直す")
+      )
+    ),
+    !resumeOffer&&React.createElement("button",{className:"btn-primary",onClick:handleStart,disabled:!id.trim()||!name.trim(),style:{marginBottom:8}},"スタート →"),
+    React.createElement("p",{className:"footer"},"© Kaoruko Takechi 2026")
+  );
+}
+
+function QuizScreen({student,unit,isReview,questions,initialPos,initialHistory,onFinish,voice}){
+  const [pos,setPos]=useState(initialPos||0);
+  const [sel,setSel]=useState(null);
+  const [confirmed,setConfirmed]=useState(false);
+  const [retryCorrect,setRetryCorrect]=useState(false); // 再挑戦で正解した状態
+  const [retrying,setRetrying]=useState(false);
+  const [history,setHistory]=useState(initialHistory||[]);
+  const [popup,setPopup]=useState(null);
+  const q=questions[pos];
+  const isCorrect=confirmed&&sel===q.a;
+  const isFirstAttemptCorrect=isCorrect&&!retrying;
+
+  // Save progress on each confirmation (skip teacher mode and review mode)
+  useEffect(()=>{
+    if(!student.teacher&&!isReview&&history.length>0&&history.length<questions.length){
+      STORE.set(student.id,student.name,unit,{
+        history,
+        pos:pos+1, // next question to start from
+        completed:false,
+        ts:Date.now()
+      });
+    }
+  },[history,student,unit,isReview,questions.length,pos]);
+
+  const confirm=useCallback((letter)=>{
+    if(retrying){
+      // 再挑戦中：history には追加せず、retryCorrect を立てるだけ
+      setSel(letter);setConfirmed(true);setPopup(null);
+      if(letter===q.a)setRetryCorrect(true);
+      else setRetryCorrect(false);
+    } else {
+      setSel(letter);setConfirmed(true);setPopup(null);
+      setHistory(h=>[...h,{n:q.n,correct:letter===q.a,tag:q.tag,word:q.w,unit}]);
+    }
+    // 自動音声再生：正解語を入れた完成文を読み上げる（毎回ユニークIDで発火）
+    const fullSentence=q.q.replace("-------",q.w);
+    voice.speak(fullSentence,`auto-q${q.n}-${Date.now()}`);
+  },[q,unit,retrying,voice]);
+
+  const next=useCallback(()=>{
+    voice.cancel(); // 自動音声を止めてから次へ
+    if(pos+1>=questions.length){
+      // 完了：保存をクリア（教師・復習モード以外）
+      if(!student.teacher&&!isReview){
+        STORE.set(student.id,student.name,unit,{history,pos:questions.length,completed:true,ts:Date.now()});
+      }
+      onFinish(history);
+    }
+    else{setPos(p=>p+1);setSel(null);setConfirmed(false);setRetrying(false);setRetryCorrect(false);setPopup(null);}
+  },[pos,questions.length,history,onFinish,student,unit,isReview,voice]);
+
+  const retry=useCallback(()=>{voice.cancel();setConfirmed(false);setSel(null);setRetrying(true);setRetryCorrect(false);},[voice]);
+
+  const pct=Math.round(((pos+1)/questions.length)*100);
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:12,color:"#888",marginBottom:6,gap:6,flexWrap:"wrap"}},
+      React.createElement("span",{style:{fontWeight:500}},isReview?"[復習] ":"",pos+1," / ",questions.length," — Unit ",unit),
+      React.createElement(VoiceBar,{voice,qText:q.q,qN:q.n})
+    ),
+    React.createElement("div",{className:"progress"},React.createElement("div",{className:"progress-bar",style:{width:pct+"%"}})),
+    React.createElement("div",{className:"card"},
+      React.createElement("p",{style:{fontSize:11,color:"#aaa",marginBottom:8}},"語彙: ",q.vocab),
+      React.createElement(TokenQ,{q:q.q,vocab:q.w,vocabPair:q.vocab,popup,setPopup})
+    ),
+    React.createElement("div",{className:"grid-2",style:{marginBottom:10}},
+      q.cs.map(([l,t])=>{
+        let cls="choice-btn";
+        if(confirmed){
+          if(l===q.a)cls+=" choice-correct";
+          else if(l===sel)cls+=" choice-wrong";
+        } else if(sel===l)cls+=" choice-selected";
+        return React.createElement("button",{key:l,className:cls,disabled:confirmed,
+          onClick:()=>{if(!confirmed)setSel(l);},
+          onDoubleClick:()=>{if(!confirmed&&sel===l)confirm(l);}},
+          React.createElement("span",{style:{fontWeight:600,flexShrink:0,minWidth:24}},"(",l,")"),
+          React.createElement("span",{style:{flex:1}},t)
+        );
+      })
+    ),
+    !confirmed&&sel&&React.createElement("button",{className:"btn-primary",style:{marginBottom:8},onClick:()=>confirm(sel)},"決定"),
+    confirmed&&React.createElement("div",null,
+      // 再挑戦で正解した時の専用バナー
+      retrying&&retryCorrect&&React.createElement("div",{className:"retry-correct-banner"},
+        React.createElement("div",{className:"main"},"✓ 再挑戦で正解！"),
+        React.createElement("div",{className:"sub"},"（最初の判定が記録されているため、得点には反映されません）")
+      ),
+      // 通常のフィードバックカード（再挑戦正解時はスキップ）
+      !(retrying&&retryCorrect)&&React.createElement("div",{className:"card",style:{background:isCorrect?"#EAF3DE":"#FCEBEB",borderColor:isCorrect?"#C0DD97":"#F7C1C1",marginBottom:8}},
+        React.createElement("p",{style:{fontWeight:500,fontSize:14,color:isCorrect?"#3B6D11":"#A32D2D",marginBottom:6}},
+          isCorrect?"✓ 正解！":"✗ 不正解。正解は ("+q.a+") "+q.cs.find(c=>c[0]===q.a)[1]
+        ),
+        React.createElement("p",{style:{fontSize:12,color:"#555",lineHeight:1.7,marginBottom:4}},q.ok),
+        !isCorrect&&q.ng[sel]&&React.createElement("p",{style:{fontSize:11,color:"#A32D2D",marginTop:4,paddingTop:4,borderTop:"0.5px solid #F7C1C1"}},
+          "("+sel+"): "+q.ng[sel]
+        )
+      ),
+      // 再挑戦正解時は解説カードを別カードで小さく出す
+      retrying&&retryCorrect&&React.createElement("div",{className:"card",style:{marginBottom:8,background:"#fafafa"}},
+        React.createElement("p",{style:{fontSize:12,color:"#555",lineHeight:1.7}},q.ok)
+      ),
+      React.createElement("div",{style:{display:"flex",gap:8}},
+        !isCorrect&&!retrying&&React.createElement("button",{className:"btn-warning",onClick:retry},"もう一度"),
+        React.createElement("button",{className:"btn-secondary",onClick:next},pos+1<questions.length?"次へ →":"終了")
+      )
+    ),
+    student.teacher&&!confirmed&&React.createElement("div",{style:{marginTop:8,padding:"6px 10px",background:"#FEF9E7",border:"0.5px solid #FAC775",borderRadius:8,fontSize:12,color:"#633806"}},
+      "TEACHER: 正解 (",q.a,") ",q.cs.find(c=>c[0]===q.a)?.[1]||""
+    ),
+    React.createElement("p",{className:"footer"},"© Kaoruko Takechi 2026")
+  );
+}
+
+function ResultScreen({student,unit,history,reviewDone,onRetry,onReview}){
+  const total=history.length;
+  const correct=history.filter(h=>h.correct).length;
+  const score=Math.round((correct/total)*100);
+  const grade=correct>=13?"◎":correct>=10?"○":"△";
+  const gradeClass=correct>=13?"excellent":correct>=10?"good":"needs-work";
+  const gradeColor=correct>=13?"#3B6D11":correct>=10?"#0C447C":"#854F0B";
+  const gradeMsg=correct>=13?"優秀！":correct>=10?"よくできました":"もう少し練習しよう";
+  const wrongItems=history.filter(h=>!h.correct);
+  const tagCounts={};
+  wrongItems.forEach(h=>{tagCounts[h.tag]=(tagCounts[h.tag]||0)+1;});
+  const weakTags=Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]);
+
+  return React.createElement("div",null,
+    React.createElement("div",{className:"grade-card "+gradeClass},
+      React.createElement("div",{className:"grade-display",style:{color:gradeColor}},grade),
+      React.createElement("div",{style:{fontSize:13,color:gradeColor,marginTop:4,fontWeight:500}},gradeMsg),
+      React.createElement("div",{style:{fontSize:32,fontWeight:600,marginTop:10,color:"#222"}},correct," / ",total),
+      React.createElement("div",{style:{fontSize:13,color:"#555",marginTop:2}},score,"点 — Unit ",unit),
+      React.createElement("div",{style:{fontSize:12,color:"#777",marginTop:4}},student.id," ",student.name)
+    ),
+    wrongItems.length>0&&!reviewDone&&React.createElement("div",null,
+      weakTags.length>0&&React.createElement("div",{className:"card",style:{marginBottom:8}},
+        React.createElement("p",{style:{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}},"弱点の傾向"),
+        weakTags.map(([tag,cnt])=>
+          React.createElement("div",{key:tag,style:{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:13,padding:"5px 0",borderBottom:"0.5px solid #f0f0f0"}},
+            React.createElement("span",{style:{color:"#444"}},TAG_LABELS[tag]||tag),
+            React.createElement("span",{style:{color:"#A32D2D",fontWeight:500}},cnt,"問ミス")
+          )
+        )
+      ),
+      React.createElement("div",{className:"card",style:{marginBottom:8}},
+        React.createElement("p",{style:{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}},"復習対象語彙（",wrongItems.length,"語）"),
+        wrongItems.map((h,i)=>React.createElement("span",{key:i,className:"tag-pill"},h.word))
+      ),
+      React.createElement("button",{className:"btn-warning",style:{marginBottom:8},onClick:onReview},"復習セッション（",wrongItems.length,"問）を始める")
+    ),
+    reviewDone&&React.createElement("div",{className:"card",style:{background:"#EAF3DE",borderColor:"#C0DD97",textAlign:"center",color:"#3B6D11",marginBottom:8,fontWeight:500}},
+      "✓ 復習完了！全問正解しました"
+    ),
+    React.createElement("div",{className:"classroom-card",style:{marginBottom:8}},
+      React.createElement("p",{style:{fontSize:14,fontWeight:600,marginBottom:6,color:"#0C447C"}},
+        React.createElement("span",{className:"icon"},"📸"),"Classroomへの提出"),
+      React.createElement("p",{style:{fontSize:12,color:"#444",lineHeight:1.7,marginBottom:6}},
+        "このページのスクリーンショットを撮って、Google Classroom に提出してください。"),
+      React.createElement("div",{style:{fontSize:12,color:"#0C447C",background:"#fff",padding:"8px 10px",borderRadius:8,border:"0.5px solid #B5D4F4"}},
+        React.createElement("span",{style:{fontWeight:600}},"提出者："),student.id," ",student.name," / Unit ",unit,
+        " / 得点 ",correct,"/",total," (",grade,")")
+    ),
+    React.createElement("button",{className:"btn-secondary",style:{marginBottom:16},onClick:onRetry},"最初からやり直す"),
+    React.createElement("p",{className:"footer"},"© Kaoruko Takechi 2026")
+  );
+}
+
+function App(){
+  const [screen,setScreen]=useState("start");
+  const [student,setStudent]=useState(null);
+  const [unit,setUnit]=useState(1);
+  const [history,setHistory]=useState([]);
+  const [resumeData,setResumeData]=useState(null);
+  const [reviewQs,setReviewQs]=useState([]);
+  const [reviewDone,setReviewDone]=useState(false);
+  const voice=useVoice();
+
+  useEffect(()=>{window.speechSynthesis?.getVoices();},[]);
+
+  const handleStart=useCallback((s)=>{
+    setStudent(s);setUnit(s.unit);setHistory([]);setReviewQs([]);setReviewDone(false);
+    setResumeData(s.resume||null);
+    setScreen("quiz");
+  },[]);
+
+  const handleQuizDone=useCallback((h)=>{
+    setHistory(h);
+    const wrongs=h.filter(x=>!x.correct).map(x=>x.n);
+    if(wrongs.length>0)setReviewQs(QS[unit].filter(q=>wrongs.includes(q.n)));
+    setResumeData(null);
+    setScreen("result");
+  },[unit]);
+
+  const handleReviewDone=useCallback(()=>{setReviewDone(true);setScreen("result");},[]);
+
+  return React.createElement("div",{id:"quiz-wrap"},
+    screen==="start"&&React.createElement(StartScreen,{onStart:handleStart}),
+    screen==="quiz"&&React.createElement(QuizScreen,{
+      student,unit,isReview:false,questions:QS[unit],
+      initialPos:resumeData?.pos||0,
+      initialHistory:resumeData?.history||[],
+      onFinish:handleQuizDone,voice
+    }),
+    screen==="review"&&React.createElement(QuizScreen,{
+      student,unit,isReview:true,questions:reviewQs,
+      initialPos:0,initialHistory:[],
+      onFinish:handleReviewDone,voice
+    }),
+    screen==="result"&&React.createElement(ResultScreen,{student,unit,history,reviewDone,onRetry:()=>setScreen("start"),onReview:()=>setScreen("review")})
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(React.createElement(App));
+
+</script>
+</body>
+</html>
